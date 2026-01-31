@@ -14,9 +14,8 @@ export default function StatsSection() {
           {stats.map((stat, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center justify-center text-center p-3 md:p-4 ${
-                index > 0 ? "border-l border-[#f1f4f2] dark:border-[#d0d5d3]" : ""
-              }`}
+              className={`flex flex-col items-center justify-center text-center p-3 md:p-4 ${index > 0 ? "border-l border-[#f1f4f2] dark:border-[#d0d5d3]" : ""
+                }`}
             >
               <p className="text-xl md:text-3xl lg:text-4xl font-black text-[#191B32] mb-1 md:mb-2">
                 {stat.value}

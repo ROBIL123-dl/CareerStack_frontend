@@ -1,19 +1,25 @@
 import React,{useState}from 'react'
+import toast,{Toaster} from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
+
+import {setUser} from '../../redux/authSlice'
 import AuthForm from '../../pages/auth'
 import Spinner from '../../components/common/spinner'
-import {checkEmail,verfiyOtp,register} from '../../services/auth'
-import toast,{Toaster} from 'react-hot-toast'
+import {checkEmail,verfiyOtp,register,signIn} from '../../services/auth'
+
 
 
 const StudentsAuth = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.user);
     const [otpModal,setOtpModal] = useState(false)
     const [error,setError] = useState(false)
     const[spinner,setSpinner] = useState(false)
-    const [login,setLogin] = useState(false)
+    const [login,setLogin] = useState(true)
     const [otpError,setOtpError] = useState(false)
-    const[loginTrue,setLoginTrue] = useState(true)
     const getData = async (data, status) => {
       if (!data) return;
     
@@ -35,12 +41,39 @@ const StudentsAuth = () => {
           }else{
              setError( error?.response?.data?.email?.[0])
           }
-          setLoginTrue(false)
+          setLogin(false)
         } finally {
           setSpinner(false);
         }
       } else {
         // login
+        console.log("login")
+        try {
+          console.log("login")
+          setSpinner(true);
+          const userData = {email:data.email,password:data.password}
+          const result = await signIn(userData);
+          console.log("result",result)
+          if (result) {
+            dispatch(setUser(result.data))
+            console.log("login succefull")
+            navigate("/student/home",{replace:true})
+            setError(false)
+          }
+        } catch (error) {
+          console.log("error",error)
+          if (error.code === "ERR_NETWORK"){
+            navigate("/serverErrorPage")
+          }
+          if(error?.status === 400){
+             setError( error?.response?.data?.non_field_errors?.[0])
+          }else{
+              navigate("/serverErrorPage")
+          }
+        
+        } finally {
+          setSpinner(false);
+        }
       }
     };
     
@@ -63,6 +96,7 @@ const StudentsAuth = () => {
       if(status){
       setError(false)
       setOtpError(false)
+      localStorage.removeItem('userData')
       toast.success('Signup successfully!')
       toast('Please login!', {
        icon: '🔐',});
@@ -73,7 +107,7 @@ const StudentsAuth = () => {
             navigate("/serverErrorPage")
           }
           setError("Some issue happend to your credentials,please reRegister again!")
-          setLoginTrue(false)
+          
       }
      
     }
@@ -87,6 +121,8 @@ const StudentsAuth = () => {
     }
    }
    }
+   console.log("user",user)
+   console.log("enter in studewnt authentication")
     return (
       <>
           <Toaster
@@ -100,6 +136,7 @@ const StudentsAuth = () => {
         ) : (
           <AuthForm
             login={login}
+            setLogin={setLogin}
             role="student"
             error={error}
             otpModal={otpModal}
@@ -107,7 +144,7 @@ const StudentsAuth = () => {
             sendOtp={getOtp}
             otpError={otpError}
             setOtpError={setOtpError}
-            loginTrue={loginTrue}
+           
           />
         )}
       </>

@@ -1,12 +1,10 @@
+import {api} from "./baseApi";
 
-import axios from "axios";
-
-const baseurl = "http://127.0.0.1:8000";
 
 export const checkEmail = async (email) => {
   try {
-    const res = await axios.post(
-      `${baseurl}/auth/verifyEmail/`,
+    const res = await api.post(
+      `/auth/verifyEmail/`,
       { email }
     );
     console.log("success response:",res)
@@ -19,8 +17,8 @@ export const checkEmail = async (email) => {
 
 export const verfiyOtp = async (data) => {
   try {
-    const res = await axios.post(
-      `${baseurl}/auth/verifyOtp/`,
+    const res = await api.post(
+      `/auth/verifyOtp/`,
       data
     );
     return true;
@@ -32,8 +30,8 @@ export const verfiyOtp = async (data) => {
 
 export const register = async (userData) => {
   try {
-    const res = await axios.post(
-      `${baseurl}/auth/signup/`,
+    const res = await api.post(
+      `/auth/signup/`,
        userData
     );
     return true;
@@ -42,6 +40,33 @@ export const register = async (userData) => {
     throw err;
   }
 };
+
+export const signIn = async (userData) => {
+  try {
+    const res = await api.post(
+      `/auth/login/`,
+       userData
+    );
+    console.log("success response:",res)
+    return res.data;
+  } catch (err) {
+    console.log("error",err)
+    throw err;
+  }
+};
+
+
+export const logOut = async()=>{
+   try {
+    const res = await api.post(
+      `/auth/logout/`,
+    );
+    return res.data.data;
+  } catch (err) {
+    console.log("error",err)
+    throw err;
+  }
+}
 
 
 

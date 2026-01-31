@@ -1,11 +1,19 @@
 
 import { useState } from "react"
+import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGraduationCap } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import user from "../../assets/images/icon-7797704_640.png";
+import { logOut } from "../../services/auth";
+import { setLogout } from "../../redux/authSlice";
 
-export default function Navbar() {
+export default function Navbar({role}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  console.log("role",role);
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-[#f1f4f2] dark:border-[#eaf3ee44]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,14 +62,38 @@ export default function Navbar() {
           {/* Search & Actions */}
           <div className="flex items-center gap-6">
            
-            <div className="flex items-center gap-3">
-              <button className="hidden sm:flex px-5 py-2.5 text-sm font-bold text-gray-900 dark:text-white bg-[#4ec692] hover:bg-gray-100 dark:hover:bg-[#9BA1FF] rounded-lg transition-colors">
-                Login
-              </button>
-              <button className="hidden sm:flex px-5 py-2.5 text-sm font-bold text-white bg-[#4ec692] hover:bg-[#4ec692] rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:-translate-y-0.5">
-                Sign Up
-              </button>
-            </div>
+            <div className="flex items-center gap-3 min-h-[48px]">
+  {role === "student" ? (
+    /* Student View → Show Profile Icon */
+    <button onClick={()=>{logOut()
+     dispatch(setLogout())
+     navigate("/student/auth")
+    }}>
+      <img
+        src={user}
+
+        alt="User"
+        className="w-6 h-6 rounded-full object-cover border border-gray-300 cursor-pointer"
+      />
+    </button>
+  ) : (
+    /* Guest View → Show Auth Buttons */
+    <>
+      <Link to="/student/auth">
+        <button className="hidden sm:flex px-5 py-2.5 text-sm font-bold text-gray-900 dark:text-white bg-[#4ec692] hover:bg-gray-100 dark:hover:bg-[#9BA1FF] rounded-lg transition-colors">
+          Login
+        </button>
+      </Link>
+
+      <Link to="/student/auth">
+        <button className="hidden sm:flex px-5 py-2.5 text-sm font-bold text-white bg-[#4ec692] hover:bg-[#4ec692] rounded-lg shadow-lg shadow-green-500/30 transition-all transform hover:-translate-y-0.5">
+          Sign Up
+        </button>
+      </Link>
+    </>
+  )}
+</div>
+
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

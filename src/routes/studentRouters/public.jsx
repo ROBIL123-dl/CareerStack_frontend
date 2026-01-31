@@ -1,17 +1,23 @@
-import React from 'react'
-import {Routes,Route} from "react-router-dom"
-import Home from '../../pages/home'
-import StudentsAuth from '../../users/students/studentsAuth'
-const Public = () => {
-  return (
-    <>
-      <Routes>
-         <Route path="/" element={<Home/>}/>
-         <Route path="/auth" element={<StudentsAuth/>}/>
-      </Routes>
-    
-    </>
-  )
+
+import { Navigate, Outlet } from "react-router-dom"
+import { useSelector } from "react-redux";
+import Spinner from "../../components/common/spinner";
+
+
+const PublicRouter = () => {
+  const { user, loading } = useSelector(
+    (state) => state.user
+  );
+  
+  if (loading) {
+    return <Spinner/>
+  }
+
+  if (user.isAuthenticated && user.role === "student") {
+    return <Navigate to="/student/home" replace />;
+  }
+  return <Outlet />
+
 }
 
-export default Public
+export default PublicRouter

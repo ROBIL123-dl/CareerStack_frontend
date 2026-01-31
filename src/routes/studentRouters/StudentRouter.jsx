@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux'
 
 import StudentsAuth from '../../users/students/studentsAuth'
 import StudentHome from '../../users/students/studentsHome'
-import Profile from '../../users/students/profile'
+
 
 
 
